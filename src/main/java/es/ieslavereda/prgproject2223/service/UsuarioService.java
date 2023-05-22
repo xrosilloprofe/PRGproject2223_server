@@ -24,7 +24,7 @@ public class UsuarioService {
     public Usuario updateUsuario(Usuario usuario) throws SQLException{
      return repository.updateUsuario(usuario);
     }
-    public boolean deleteUsuario(int id) throws SQLException {
+    public Usuario deleteUsuario(int id) throws SQLException {
         return repository.deleteUsuario(id);
     }
     public List<Usuario> getAllUsuarios() throws SQLException {

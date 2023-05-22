@@ -64,26 +64,23 @@ public class UsuarioRepository implements IUsuarioRepository {
             cs.setString(4,usuario.getApellidos());
             cs.setInt(5,usuario.getIdOficio());
             cs.execute();
-            int numActualizados = cs.getInt(1);
+            cs.getInt(1);
         }
         return usuario;
     }
 
     @Override
-    public boolean deleteUsuario(int id) throws SQLException {
-        boolean borrado=false;
-        int numBorrados = 0;
+    public Usuario deleteUsuario(int id) throws SQLException {
+        Usuario usuario = getUsuario(id);
         String query = "{?  = call eliminar_usuario(?)}";
 
         try(Connection connection = MyDataSource.getMyDataSource().getConnection();
             CallableStatement cs = connection.prepareCall(query)){
             cs.setInt(2,id);
             cs.execute();
-            numBorrados = cs.getInt(1);
-            if (numBorrados==1)
-                borrado = true;
+            cs.getInt(1);
         }
-        return borrado;
+        return usuario;
     }
 
     @Override

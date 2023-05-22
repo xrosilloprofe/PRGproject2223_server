@@ -29,7 +29,7 @@ public class UsuarioController {
         }
     }
 
-    @PostMapping("/usuarios")
+    @PostMapping("/usuarios/")
     public ResponseEntity<?> addUsuario(@RequestBody Usuario usuario) {
         try{
             return new ResponseEntity<>(service.addUsuario(usuario),HttpStatus.OK);
@@ -41,7 +41,7 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/usuarios")
+    @PutMapping("/usuarios/")
     public ResponseEntity<?> updateUsuario(@RequestBody Usuario usuario) {
         try{
             return new ResponseEntity<>(service.updateUsuario(usuario),HttpStatus.OK);
@@ -56,10 +56,11 @@ public class UsuarioController {
     @DeleteMapping("/usuarios/{id}")
     public ResponseEntity<?> deleteUsuario(@PathVariable("id") int id) {
         try{
-            if (service.deleteUsuario(id))
-                return new ResponseEntity<>("Borrado",HttpStatus.OK);
-            else
-                return new ResponseEntity<>("No borrado",HttpStatus.NOT_FOUND);
+//            if (service.deleteUsuario(id))
+//                return new ResponseEntity<>("Borrado",HttpStatus.OK);
+//            else
+//                return new ResponseEntity<>("No borrado",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(service.deleteUsuario(id),HttpStatus.OK);
         }  catch (SQLException e){
             Map<String,Object> response = new HashMap<>();
             response.put("code",e.getErrorCode());
@@ -68,7 +69,7 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/usuarios")
+    @GetMapping("/usuarios/")
     public ResponseEntity<?> getAllUsuarios() {
         try{
             return new ResponseEntity<>(service.getAllUsuarios(),HttpStatus.OK);

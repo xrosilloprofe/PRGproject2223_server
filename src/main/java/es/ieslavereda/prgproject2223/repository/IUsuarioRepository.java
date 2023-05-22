@@ -8,7 +8,7 @@ public interface IUsuarioRepository {
     Usuario getUsuario(int id) throws SQLException;
     Usuario addUsuario(Usuario usuario) throws SQLException;
     Usuario updateUsuario(Usuario usuario) throws SQLException;
-    boolean deleteUsuario(int id) throws SQLException;
+    Usuario deleteUsuario(int id) throws SQLException;
     List<Usuario> getAllUsuarios() throws SQLException;
 
 }

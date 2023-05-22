@@ -42,7 +42,7 @@ public class OficioController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/oficios")
+    @GetMapping("/oficios/")
     public ResponseEntity<?> getOficios() {
         try{
             return new ResponseEntity<>(service.getOficios(),HttpStatus.OK);
