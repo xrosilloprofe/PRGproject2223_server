@@ -1,9 +1,10 @@
 package es.ieslavereda.prgproject2223.repository;
 
-import es.ieslavereda.prgproject2223.model.MyDataSource;
 import es.ieslavereda.prgproject2223.model.Oficio;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,12 +12,16 @@ import java.util.List;
 
 @Repository
 public class OficioRepository implements IOficioRepository{
+
+    @Autowired
+    DataSource dataSource;
+
     @Override
     public List<Oficio> getOficios()  throws SQLException {
         List<Oficio> oficios = new ArrayList<>();
         String query = "{call obtener_oficios(?)}";
 
-        try(Connection connection = MyDataSource.getMyDataSource().getConnection();
+        try(Connection connection = dataSource.getConnection();
             CallableStatement cs = connection.prepareCall(query)){
             cs.setNull(1,0);
             ResultSet rs = cs.executeQuery();
@@ -32,10 +37,10 @@ public class OficioRepository implements IOficioRepository{
 
     @Override
     public String getImage(int id)  throws SQLException {
-        String image = null;
+        String image;
         String query = "{call obtener_image_oficio(?,?)}";
 
-        try(Connection connection = MyDataSource.getMyDataSource().getConnection();
+        try(Connection connection = dataSource.getConnection();
             CallableStatement cs = connection.prepareCall(query)){
             cs.registerOutParameter(1, Types.BLOB);
             cs.setInt(2,id);
@@ -53,7 +58,7 @@ public class OficioRepository implements IOficioRepository{
         Oficio oficio = null;
         String query = "{call obtener_oficios(?)}";
 
-        try(Connection connection = MyDataSource.getMyDataSource().getConnection();
+        try(Connection connection = dataSource.getConnection();
             CallableStatement cs = connection.prepareCall(query)){
             cs.setInt(1,id);
             ResultSet rs = cs.executeQuery();

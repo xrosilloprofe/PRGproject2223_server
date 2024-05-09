@@ -2,8 +2,10 @@ package es.ieslavereda.prgproject2223.repository;
 
 import es.ieslavereda.prgproject2223.model.MyDataSource;
 import es.ieslavereda.prgproject2223.model.Usuario;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +13,15 @@ import java.util.List;
 @Repository
 public class UsuarioRepository implements IUsuarioRepository {
 
+    @Autowired
+    DataSource dataSource;
 
     @Override
     public Usuario getUsuario(int id) throws SQLException {
         Usuario usuario=null;
         String query = "Select * from Usuario where idUsuario = ? ";
 
-        try(Connection connection = MyDataSource.getMyDataSource().getConnection();
+        try(Connection connection = dataSource.getConnection();
             PreparedStatement ps = connection.prepareStatement(query)){
             ps.setInt(1,id);
             ResultSet rs = ps.executeQuery();
@@ -33,10 +37,10 @@ public class UsuarioRepository implements IUsuarioRepository {
 
     @Override
     public Usuario addUsuario(Usuario usuario) throws SQLException {
-        Usuario usuari=null;
+        Usuario usuari;
         String query = "{call crear_usuario(?,?,?,?,?)}";
 
-        try(Connection connection = MyDataSource.getMyDataSource().getConnection();
+        try(Connection connection = dataSource.getConnection();
             CallableStatement cs = connection.prepareCall(query)){
             cs.registerOutParameter(1,Types.INTEGER);
             cs.setInt(2,usuario.getIdUsuario());
@@ -44,11 +48,8 @@ public class UsuarioRepository implements IUsuarioRepository {
             cs.setString(4, usuario.getApellidos());
             cs.setInt(5,usuario.getIdOficio());
             cs.execute();
-            usuari = Usuario.builder().idUsuario(cs.getInt(1))
-                    .nombre(usuario.getNombre())
-                    .apellidos(usuario.getApellidos())
-                    .idOficio(usuario.getIdOficio())
-                    .build();
+
+            usuari = getUsuario(cs.getInt(1));
         }
         return usuari;
     }
@@ -57,7 +58,7 @@ public class UsuarioRepository implements IUsuarioRepository {
     public Usuario updateUsuario(Usuario usuario) throws SQLException {
         String query = "{?  = call actualizar_usuario (?,?,?,?)}";
 
-        try(Connection connection = MyDataSource.getMyDataSource().getConnection();
+        try(Connection connection = dataSource.getConnection();
             CallableStatement cs = connection.prepareCall(query)){
             cs.setInt(2,usuario.getIdUsuario());
             cs.setString(3,usuario.getNombre());
@@ -66,7 +67,7 @@ public class UsuarioRepository implements IUsuarioRepository {
             cs.execute();
             cs.getInt(1);
         }
-        return usuario;
+        return getUsuario(usuario.getIdUsuario());
     }
 
     @Override
@@ -74,12 +75,15 @@ public class UsuarioRepository implements IUsuarioRepository {
         Usuario usuario = getUsuario(id);
         String query = "{?  = call eliminar_usuario(?)}";
 
-        try(Connection connection = MyDataSource.getMyDataSource().getConnection();
-            CallableStatement cs = connection.prepareCall(query)){
-            cs.setInt(2,id);
-            cs.execute();
-            cs.getInt(1);
+        if (usuario!=null) {
+            try (Connection connection = MyDataSource.getMyDataSource().getConnection();
+                 CallableStatement cs = connection.prepareCall(query)) {
+                cs.setInt(2, id);
+                cs.execute();
+                cs.getInt(1);
+            }
         }
+
         return usuario;
     }
 

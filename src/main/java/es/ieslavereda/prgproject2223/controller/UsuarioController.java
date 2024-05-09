@@ -20,7 +20,10 @@ public class UsuarioController {
     @GetMapping("/usuarios/{id}")
     public ResponseEntity<?> getUsuario(@PathVariable("id") int id) {
         try{
-            return new ResponseEntity<>(service.getUsuario(id),HttpStatus.OK);
+            Usuario usuario = service.getUsuario(id);
+            if(usuario==null)
+                return new ResponseEntity<>("USER NOT FOUND",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(usuario,HttpStatus.OK);
         }  catch (SQLException e){
             Map<String,Object> response = new HashMap<>();
             response.put("code",e.getErrorCode());
@@ -32,7 +35,11 @@ public class UsuarioController {
     @PostMapping("/usuarios/")
     public ResponseEntity<?> addUsuario(@RequestBody Usuario usuario) {
         try{
-            return new ResponseEntity<>(service.addUsuario(usuario),HttpStatus.OK);
+            Usuario usuario1 = service.addUsuario(usuario);
+            if(usuario1==null)
+                return new ResponseEntity<>("USER ALREADY EXISTS",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(usuario1,HttpStatus.OK);
+
         }  catch (SQLException e){
             Map<String,Object> response = new HashMap<>();
             response.put("code",e.getErrorCode());
@@ -44,7 +51,10 @@ public class UsuarioController {
     @PutMapping("/usuarios/")
     public ResponseEntity<?> updateUsuario(@RequestBody Usuario usuario) {
         try{
-            return new ResponseEntity<>(service.updateUsuario(usuario),HttpStatus.OK);
+            Usuario usuario1 = service.updateUsuario(usuario);
+            if(usuario1==null)
+                return new ResponseEntity<>("USER NOT FOUND",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(usuario1,HttpStatus.OK);
         }  catch (SQLException e){
             Map<String,Object> response = new HashMap<>();
             response.put("code",e.getErrorCode());
@@ -56,11 +66,10 @@ public class UsuarioController {
     @DeleteMapping("/usuarios/{id}")
     public ResponseEntity<?> deleteUsuario(@PathVariable("id") int id) {
         try{
-//            if (service.deleteUsuario(id))
-//                return new ResponseEntity<>("Borrado",HttpStatus.OK);
-//            else
-//                return new ResponseEntity<>("No borrado",HttpStatus.NOT_FOUND);
-            return new ResponseEntity<>(service.deleteUsuario(id),HttpStatus.OK);
+            Usuario usuario = service.deleteUsuario(id);
+            if(usuario==null)
+                return new ResponseEntity<>("USER NOT FOUND",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(usuario,HttpStatus.OK);
         }  catch (SQLException e){
             Map<String,Object> response = new HashMap<>();
             response.put("code",e.getErrorCode());
